@@ -1,6 +1,7 @@
 module;
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+#include <stdlib.h>
 
 export module hai;
 
@@ -31,5 +32,33 @@ public:
   }
 
   [[nodiscard]] constexpr auto operator*() noexcept { return m_file; }
+};
+
+export class c_memory {
+  void *m_ptr;
+
+  void close() {
+    if (m_ptr != nullptr)
+      free(m_ptr);
+
+    m_ptr = nullptr;
+  }
+
+public:
+  explicit c_memory(unsigned count, unsigned size) noexcept
+      : m_ptr{calloc(count, size)} {}
+  ~c_memory() noexcept { close(); }
+
+  c_memory(const c_memory &) = delete;
+  c_memory &operator=(const c_memory &) = delete;
+
+  c_memory(c_memory &&o) : m_ptr(o.m_ptr) {}
+  c_memory &operator=(c_memory &&o) {
+    close();
+    m_ptr = o.m_ptr;
+    return *this;
+  }
+
+  [[nodiscard]] constexpr auto operator*() noexcept { return m_ptr; }
 };
 } // namespace hai

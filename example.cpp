@@ -7,8 +7,8 @@ int use_c_file() {
   if (!*f)
     return 1;
 
-  int buf[32];
-  if (fread(buf, sizeof(int), 32, *f) != 32)
+  hai::c_memory buf{sizeof(int), 32};
+  if (fread(*buf, sizeof(int), 32, *f) != 32)
     return 2;
 
   return 0;

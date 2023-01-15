@@ -1,11 +1,6 @@
-#include "ecow.hpp"
+#include "build.hpp"
 
 using namespace ecow;
-
-inline auto hai() {
-  auto m = unit::create<mod>("hai");
-  return m;
-}
 
 int main(int argc, char **argv) {
   auto example = unit::create<exe>("example.exe");

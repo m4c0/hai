@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <utility>
 
 import hai;
 
@@ -26,7 +25,7 @@ auto use_uptr() {
   // Just check if it is syntatically logical
   auto p = [] {
     hai::uptr<long> p{42l};
-    return std::move(p);
+    return p;
   }();
   p = hai::uptr<long>{22l};
   *p = 99;

@@ -8,12 +8,12 @@ export module hai;
 
 namespace hai {
 template <typename Tp> struct deleter {
-  void operator()(Tp f) { delete[] f; }
+  constexpr void operator()(Tp f) { delete[] f; }
 };
 export template <typename Tp> class holder {
   Tp m_ptr;
 
-  void reset() {
+  constexpr void reset() {
     if (m_ptr != nullptr)
       deleter<Tp>{}(m_ptr);
 
@@ -24,13 +24,13 @@ protected:
   explicit constexpr holder(Tp p) noexcept : m_ptr{p} {}
 
 public:
-  ~holder() noexcept { reset(); }
+  constexpr ~holder() noexcept { reset(); }
 
   holder(const holder &) = delete;
   holder &operator=(const holder &) = delete;
 
-  holder(holder &&o) : m_ptr(o.m_ptr) {}
-  holder &operator=(holder &&o) {
+  constexpr holder(holder &&o) : m_ptr(o.m_ptr) {}
+  constexpr holder &operator=(holder &&o) {
     reset();
     m_ptr = o.m_ptr;
     return *this;
@@ -46,7 +46,7 @@ export template <typename Tp> class memory : holder<Tp *> {
   unsigned m_count;
 
 public:
-  explicit memory(unsigned count) noexcept
+  constexpr explicit memory(unsigned count) noexcept
       : holder<Tp *>{new Tp[count]}, m_count{count} {}
 
   using holder<Tp *>::operator*;
@@ -80,12 +80,18 @@ public:
 export template <typename Tp> class uptr : holder<Tp *> {
 public:
   template <typename... Args>
-  uptr(Args &&...args) : holder<Tp *>{new Tp{args...}} {}
+  constexpr uptr(Args &&...args) : holder<Tp *>{new Tp{args...}} {}
 
   [[nodiscard]] constexpr Tp &operator*() noexcept {
     return *(holder<Tp *>::operator*());
   }
+  [[nodiscard]] constexpr const Tp &operator*() const noexcept {
+    return *(holder<Tp *>::operator*());
+  }
   [[nodiscard]] constexpr Tp *operator->() noexcept {
+    return holder<Tp *>::operator*();
+  }
+  [[nodiscard]] constexpr const Tp *operator->() const noexcept {
     return holder<Tp *>::operator*();
   }
 };

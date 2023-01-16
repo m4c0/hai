@@ -8,7 +8,7 @@ export module hai;
 
 namespace hai {
 template <typename Tp> struct deleter {
-  constexpr void operator()(Tp f) { delete[] f; }
+  constexpr void operator()(Tp f) { delete f; }
 };
 export template <typename Tp> class holder {
   Tp m_ptr;
@@ -39,21 +39,6 @@ public:
   [[nodiscard]] constexpr auto &operator*() noexcept { return m_ptr; }
   [[nodiscard]] constexpr const auto &operator*() const noexcept {
     return m_ptr;
-  }
-};
-
-export template <typename Tp> class memory : holder<Tp *> {
-  unsigned m_count;
-
-public:
-  constexpr explicit memory(unsigned count) noexcept
-      : holder<Tp *>{new Tp[count]}, m_count{count} {}
-
-  using holder<Tp *>::operator*;
-
-  [[nodiscard]] constexpr auto &operator[](unsigned index) {
-    assert(index >= 0 && index < m_count);
-    return (**this)[index];
   }
 };
 
@@ -95,4 +80,5 @@ public:
     return holder<Tp *>::operator*();
   }
 };
+static_assert(*uptr<bool>{true});
 } // namespace hai

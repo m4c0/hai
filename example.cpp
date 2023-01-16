@@ -13,14 +13,6 @@ int use_c_file() {
 
   return 0;
 }
-int use_cpp_mem() {
-  hai::memory<long> b{5};
-  if (!*b)
-    return 8;
-
-  b[0] = b[1] = b[4] + 4;
-  return 0;
-}
 auto use_uptr() {
   // Just check if it is syntatically logical
   auto p = [] {
@@ -32,4 +24,4 @@ auto use_uptr() {
   return p;
 }
 
-int main() { return use_c_file() + use_cpp_mem(); }
+int main() { return use_c_file(); }

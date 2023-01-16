@@ -36,7 +36,10 @@ public:
     return *this;
   }
 
-  [[nodiscard]] constexpr auto operator*() noexcept { return m_ptr; }
+  [[nodiscard]] constexpr auto &operator*() noexcept { return m_ptr; }
+  [[nodiscard]] constexpr const auto &operator*() const noexcept {
+    return m_ptr;
+  }
 };
 
 export template <typename Tp> class memory : holder<Tp *> {

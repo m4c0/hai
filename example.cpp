@@ -15,11 +15,8 @@ int use_c_file() {
 }
 auto use_uptr() {
   // Just check if it is syntatically logical
-  auto p = [] {
-    hai::uptr<long> p{42l};
-    return p;
-  }();
-  p = hai::uptr<long>{22l};
+  auto p = [] { return hai::uptr<long>::make(42l); }();
+  p = hai::uptr<long>::make(44l);
   *p = 99;
   return p;
 }

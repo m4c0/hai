@@ -8,10 +8,17 @@ export module hai;
 
 namespace hai {
 template <typename Tp> struct deleter {
-  constexpr void operator()(Tp f) { delete f; }
+  constexpr void operator()(Tp *f) const noexcept { delete f; }
 };
+template <> struct deleter<FILE> {
+  void operator()(FILE *f) { fclose(f); }
+};
+template <> struct deleter<void> {
+  void operator()(void *f) { free(f); }
+};
+
 export template <typename Tp> class holder {
-  Tp m_ptr;
+  Tp *m_ptr;
 
   constexpr void reset() {
     if (m_ptr != nullptr)
@@ -20,10 +27,8 @@ export template <typename Tp> class holder {
     m_ptr = nullptr;
   }
 
-protected:
-  explicit constexpr holder(Tp p) noexcept : m_ptr{p} {}
-
 public:
+  explicit constexpr holder(Tp *p) noexcept : m_ptr{p} {}
   constexpr ~holder() noexcept { reset(); }
 
   holder(const holder &) = delete;
@@ -42,43 +47,38 @@ public:
   }
 };
 
-template <> struct deleter<FILE *> {
-  void operator()(FILE *f) { fclose(f); }
-};
-export class c_file : holder<FILE *> {
+export class c_file : holder<FILE> {
 public:
   explicit c_file(const char *name, const char *mode) noexcept
       : holder{fopen(name, mode)} {}
-  using holder<FILE *>::operator*;
+  using holder<FILE>::operator*;
 };
 
-template <> struct deleter<void *> {
-  void operator()(void *f) { free(f); }
-};
-export class c_memory : holder<void *> {
+export class c_memory : holder<void> {
 public:
   explicit c_memory(unsigned count, unsigned size) noexcept
       : holder{calloc(count, size)} {}
-  using holder<void *>::operator*;
+  using holder<void>::operator*;
 };
 
-export template <typename Tp> class uptr : holder<Tp *> {
+export template <typename Tp> class uptr {
+  holder<Tp> m_holder;
+
 public:
-  template <typename... Args>
-  constexpr uptr(Args &&...args) : holder<Tp *>{new Tp{args...}} {}
+  explicit constexpr uptr(Tp *ptr) : m_holder{ptr} {}
 
-  [[nodiscard]] constexpr Tp &operator*() noexcept {
-    return *(holder<Tp *>::operator*());
+  template <typename... Args> static constexpr uptr<Tp> make(Args &&...args) {
+    return uptr<Tp>{new Tp{args...}};
   }
+
+  [[nodiscard]] constexpr Tp &operator*() noexcept { return **m_holder; }
   [[nodiscard]] constexpr const Tp &operator*() const noexcept {
-    return *(holder<Tp *>::operator*());
+    return **m_holder;
   }
-  [[nodiscard]] constexpr Tp *operator->() noexcept {
-    return holder<Tp *>::operator*();
-  }
+  [[nodiscard]] constexpr Tp *operator->() noexcept { return *m_holder; }
   [[nodiscard]] constexpr const Tp *operator->() const noexcept {
-    return holder<Tp *>::operator*();
+    return *m_holder;
   }
 };
-static_assert(*uptr<bool>{true});
+static_assert(*uptr<bool>::make(true));
 } // namespace hai

@@ -4,6 +4,12 @@ module;
 #include <stdio.h>
 #include <stdlib.h>
 
+// This is only required when compiling on MacOSX, but it fails on Android (for
+// reasons)
+#ifdef __APPLE__
+#include <new>
+#endif
+
 export module hai;
 
 namespace hai {

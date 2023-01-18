@@ -79,6 +79,10 @@ public:
     return uptr<Tp>{new Tp{args...}};
   }
 
+  [[nodiscard]] constexpr operator bool() const noexcept {
+    return *m_holder != nullptr;
+  }
+
   [[nodiscard]] constexpr Tp &operator*() noexcept { return **m_holder; }
   [[nodiscard]] constexpr const Tp &operator*() const noexcept {
     return **m_holder;
@@ -89,4 +93,5 @@ public:
   }
 };
 static_assert(*uptr<bool>::make(true));
+static_assert(uptr<bool>::make(false) && !*uptr<bool>::make(false));
 } // namespace hai

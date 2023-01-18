@@ -34,6 +34,7 @@ export template <typename Tp> class holder {
   }
 
 public:
+  constexpr holder() noexcept = default;
   explicit constexpr holder(Tp *p) noexcept : m_ptr{p} {}
   constexpr ~holder() noexcept { reset(); }
 
@@ -71,6 +72,7 @@ export template <typename Tp> class uptr {
   holder<Tp> m_holder;
 
 public:
+  constexpr uptr() noexcept = default;
   explicit constexpr uptr(Tp *ptr) : m_holder{ptr} {}
 
   template <typename... Args> static constexpr uptr<Tp> make(Args &&...args) {

@@ -11,6 +11,7 @@ module;
 #endif
 
 export module hai;
+import traits;
 
 namespace hai {
 template <typename Tp> struct deleter {
@@ -76,7 +77,7 @@ public:
   explicit constexpr uptr(Tp *ptr) : m_holder{ptr} {}
 
   template <typename... Args> static constexpr uptr<Tp> make(Args &&...args) {
-    return uptr<Tp>{new Tp{args...}};
+    return uptr<Tp>{new Tp{traits::fwd<Args>(args)...}};
   }
 
   [[nodiscard]] constexpr operator bool() const noexcept {
@@ -94,4 +95,5 @@ public:
 };
 static_assert(*uptr<bool>::make(true));
 static_assert(uptr<bool>::make(false) && !*uptr<bool>::make(false));
+static_assert(!**uptr<uptr<bool>>::make(uptr<bool>::make(false)));
 } // namespace hai

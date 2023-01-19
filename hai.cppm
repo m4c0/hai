@@ -41,7 +41,7 @@ public:
   holder(const holder &) = delete;
   holder &operator=(const holder &) = delete;
 
-  constexpr holder(holder &&o) : m_ptr(o.m_ptr) {}
+  constexpr holder(holder &&o) : m_ptr(o.m_ptr) { o.m_ptr = nullptr; }
   constexpr holder &operator=(holder &&o) {
     reset();
     m_ptr = o.m_ptr;

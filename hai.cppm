@@ -118,12 +118,8 @@ public:
     return m_count == 0;
   }
 
-  [[nodiscard]] constexpr Tp &operator*() noexcept { return **m_holder; }
-  [[nodiscard]] constexpr const Tp &operator*() const noexcept {
-    return **m_holder;
-  }
-  [[nodiscard]] constexpr Tp *operator->() noexcept { return *m_holder; }
-  [[nodiscard]] constexpr const Tp *operator->() const noexcept {
+  [[nodiscard]] constexpr Tp *operator*() noexcept { return *m_holder; }
+  [[nodiscard]] constexpr const Tp *operator*() const noexcept {
     return *m_holder;
   }
 };
@@ -169,13 +165,13 @@ public:
     return m_shr != nullptr;
   }
 
-  [[nodiscard]] constexpr Tp &operator*() noexcept { return **m_shr; }
+  [[nodiscard]] constexpr Tp &operator*() noexcept { return ***m_shr; }
   [[nodiscard]] constexpr const Tp &operator*() const noexcept {
-    return **m_shr;
+    return ***m_shr;
   }
-  [[nodiscard]] constexpr Tp *operator->() noexcept { return *m_shr; }
+  [[nodiscard]] constexpr Tp *operator->() noexcept { return **m_shr; }
   [[nodiscard]] constexpr const Tp *operator->() const noexcept {
-    return *m_shr;
+    return **m_shr;
   }
 };
 static_assert(*sptr<bool>::make(true));
@@ -191,5 +187,12 @@ static_assert([] {
     *d = true;
   }
   return !a && b && c && *b && *c;
+}());
+static_assert([] {
+  struct test {
+    int t;
+  };
+  sptr<test>::make()->t = 0;
+  return true;
 }());
 } // namespace hai

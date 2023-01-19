@@ -44,8 +44,10 @@ public:
 
   constexpr holder(holder &&o) : m_ptr(o.m_ptr) { o.m_ptr = nullptr; }
   constexpr holder &operator=(holder &&o) {
-    reset();
-    m_ptr = o.m_ptr;
+    if (this != &o) {
+      reset();
+      m_ptr = o.m_ptr;
+    }
     return *this;
   }
 

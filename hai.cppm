@@ -125,7 +125,7 @@ public:
 };
 
 export template <typename Tp> class sptr {
-  sptr_shr<Tp> *m_shr;
+  sptr_shr<Tp> *m_shr{};
 
   constexpr void reset() {
     if (m_shr && m_shr->decr_use())
@@ -147,10 +147,14 @@ public:
     return *this;
   }
 
-  constexpr sptr(const sptr &o) : m_shr{o.m_shr} { m_shr->incr_use(); }
+  constexpr sptr(const sptr &o) : m_shr{o.m_shr} {
+    if (m_shr != nullptr)
+      m_shr->incr_use();
+  }
   constexpr sptr &operator=(const sptr &o) {
     if (o.m_shr != m_shr) {
-      o.m_shr->incr_use();
+      if (o.m_shr != nullptr)
+        o.m_shr->incr_use();
       reset();
       m_shr = o.m_shr;
     }
@@ -180,13 +184,19 @@ static_assert(!**sptr<sptr<bool>>::make(sptr<bool>::make(false)));
 static_assert([] {
   sptr<bool> a = sptr<bool>::make(false);
   sptr<bool> b = traits::move(a);
-  sptr<bool> c = b;
+  sptr<bool> c{b};
   b = c;
   {
     sptr<bool> d = c;
     *d = true;
   }
   return !a && b && c && *b && *c;
+}());
+static_assert([] {
+  sptr<bool> a;
+  sptr<bool> b{a};
+  sptr<bool> c = b;
+  return true;
 }());
 static_assert([] {
   struct test {

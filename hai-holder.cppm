@@ -11,13 +11,12 @@ namespace hai {
 template <typename Tp> struct deleter {
   constexpr void operator()(Tp *f) const noexcept { delete f; }
 };
-
-export template <typename Tp> class holder {
+export template <typename Tp, typename Del = deleter<Tp>> class holder {
   Tp *m_ptr;
 
   constexpr void reset() {
     if (m_ptr != nullptr)
-      deleter<Tp>{}(m_ptr);
+      Del{}(m_ptr);
 
     m_ptr = nullptr;
   }
@@ -43,5 +42,13 @@ public:
   [[nodiscard]] constexpr const auto &operator*() const noexcept {
     return m_ptr;
   }
+};
+
+template <typename Tp> struct deleter<Tp[]> {
+  constexpr void operator()(Tp *f) const noexcept { delete[] f; }
+};
+export template <typename Tp> struct holder<Tp[]> : holder<Tp, deleter<Tp[]>> {
+  using holder<Tp, deleter<Tp[]>>::holder;
+  using holder<Tp, deleter<Tp[]>>::operator*;
 };
 } // namespace hai

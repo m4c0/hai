@@ -8,5 +8,8 @@ inline auto hai() {
 
   auto m = unit::create<mod>("hai");
   m->add_wsdep("traits", traits());
+  m->add_part("holder");
+  m->add_part("sptr");
+  m->add_part("uptr");
   return m;
 }

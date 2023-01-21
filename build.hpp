@@ -11,5 +11,6 @@ inline auto hai() {
   m->add_part("holder");
   m->add_part("sptr");
   m->add_part("uptr");
+  m->add_part("cstr");
   return m;
 }

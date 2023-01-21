@@ -6,6 +6,7 @@ module;
 export module hai;
 import traits;
 import :holder;
+export import :cstr;
 export import :sptr;
 export import :uptr;
 

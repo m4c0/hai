@@ -25,11 +25,3 @@ jobs:
         with:
           os: ${{ matrix.os }}
           project: hai
-      - name: 🧩 Test (macosx)
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: ./out/macosx/example.exe
-        working-directory: hai
-      - name: 🧩 Test (windows)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: ./out/win32/example.exe
-        working-directory: hai

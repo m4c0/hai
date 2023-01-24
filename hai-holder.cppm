@@ -32,13 +32,19 @@ public:
   holder(const holder &) = delete;
   holder &operator=(const holder &) = delete;
 
-  constexpr holder(holder &&o) : m_ptr(o.m_ptr) { o.m_ptr = nullptr; }
+  constexpr holder(holder &&o) : m_ptr(o.release()) {}
   constexpr holder &operator=(holder &&o) {
     if (m_ptr != o.m_ptr) {
       reset();
-      m_ptr = o.m_ptr;
+      m_ptr = o.release();
     }
     return *this;
+  }
+
+  [[nodiscard]] constexpr auto release() noexcept {
+    auto res = m_ptr;
+    m_ptr = nullptr;
+    return res;
   }
 
   [[nodiscard]] constexpr auto &operator*() noexcept { return m_ptr; }

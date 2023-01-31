@@ -59,5 +59,12 @@ template <typename Tp> struct deleter<Tp[]> {
 export template <typename Tp> struct holder<Tp[]> : holder<Tp, deleter<Tp[]>> {
   using holder<Tp, deleter<Tp[]>>::holder;
   using holder<Tp, deleter<Tp[]>>::operator*;
+
+  static auto make(int size) { return holder<Tp[]>{new Tp[size]}; };
 };
+static_assert([] {
+  auto h = holder<bool[]>::make(3);
+  (*h)[1] = true;
+  return (*h)[1];
+});
 } // namespace hai

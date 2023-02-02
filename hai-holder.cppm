@@ -11,29 +11,27 @@ void operator delete(void *ptr) noexcept { return free(ptr); }
 void operator delete[](void *ptr) noexcept { return free(ptr); }
 
 namespace hai {
-template <typename Tp> struct deleter {
-  constexpr void operator()(Tp *f) const noexcept { delete f; }
-};
-export template <typename Tp, typename Del = deleter<Tp>> class holder {
-  Tp *m_ptr;
+template <typename Tp> struct deleter;
+export template <typename Tp, typename Del = deleter<Tp>> class value_holder {
+  Tp m_ptr{};
 
   constexpr void reset() {
-    if (m_ptr != nullptr)
+    if (m_ptr)
       Del{}(m_ptr);
 
-    m_ptr = nullptr;
+    m_ptr = {};
   }
 
 public:
-  constexpr holder() noexcept = default;
-  explicit constexpr holder(Tp *p) noexcept : m_ptr{p} {}
-  constexpr ~holder() noexcept { reset(); }
+  constexpr value_holder() noexcept = default;
+  explicit constexpr value_holder(Tp p) noexcept : m_ptr{p} {}
+  constexpr ~value_holder() noexcept { reset(); }
 
-  holder(const holder &) = delete;
-  holder &operator=(const holder &) = delete;
+  value_holder(const value_holder &) = delete;
+  value_holder &operator=(const value_holder &) = delete;
 
-  constexpr holder(holder &&o) : m_ptr(o.release()) {}
-  constexpr holder &operator=(holder &&o) {
+  constexpr value_holder(value_holder &&o) : m_ptr(o.release()) {}
+  constexpr value_holder &operator=(value_holder &&o) {
     if (m_ptr != o.m_ptr) {
       reset();
       m_ptr = o.release();
@@ -51,6 +49,15 @@ public:
   [[nodiscard]] constexpr const auto &operator*() const noexcept {
     return m_ptr;
   }
+};
+
+template <typename Tp> struct deleter<Tp *> {
+  constexpr void operator()(Tp *f) const noexcept { delete f; }
+};
+export template <typename Tp, typename Del = deleter<Tp *>>
+struct holder : value_holder<Tp *, Del> {
+  using value_holder<Tp *, Del>::value_holder;
+  using value_holder<Tp *, Del>::operator*;
 };
 
 template <typename Tp> struct deleter<Tp[]> {

@@ -41,7 +41,7 @@ public:
 
   [[nodiscard]] constexpr auto release() noexcept {
     auto res = m_ptr;
-    m_ptr = nullptr;
+    m_ptr = {};
     return res;
   }
 

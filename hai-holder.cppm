@@ -1,15 +1,6 @@
 export module hai:holder;
 import traits;
 
-// This is only needed until clang fixes a linking bug. Without these, anything
-// based on hai fails because of missing "hai::operator X"
-extern "C" void *malloc(traits::size_t);
-extern "C" void free(void *);
-void *operator new(traits::size_t count) { return malloc(count); }
-void *operator new[](traits::size_t count) { return malloc(count); }
-void operator delete(void *ptr) noexcept { return free(ptr); }
-void operator delete[](void *ptr) noexcept { return free(ptr); }
-
 namespace hai {
 template <typename Tp> struct deleter;
 export template <typename Tp, typename Del = deleter<Tp>> class value_holder {

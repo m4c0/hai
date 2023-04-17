@@ -7,5 +7,6 @@ int main(int argc, char **argv) {
   // with virtuals and the global new/delete operators.
   auto p = unit::create<exe>("poc");
   p->add_ref(hai());
+  p->add_unit<>("poc");
   return run_main(p, argc, argv);
 }

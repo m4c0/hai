@@ -58,7 +58,7 @@ export template <typename Tp> struct holder<Tp[]> : holder<Tp, deleter<Tp[]>> {
   using holder<Tp, deleter<Tp[]>>::holder;
   using holder<Tp, deleter<Tp[]>>::operator*;
 
-  static auto make(int size) { return holder<Tp[]>{new Tp[size]}; };
+  static constexpr auto make(int size) { return holder<Tp[]>{new Tp[size]}; };
 };
 static_assert([] {
   auto h = holder<bool[]>::make(3);

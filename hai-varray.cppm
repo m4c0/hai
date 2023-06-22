@@ -9,11 +9,14 @@ public:
   constexpr varray() noexcept = default;
   constexpr explicit varray(unsigned capacity) : array<Tp>{capacity} {}
 
+  [[nodiscard]] constexpr auto capacity() const noexcept {
+    return array<Tp>::size();
+  }
   [[nodiscard]] constexpr auto size() const noexcept { return m_count; }
 
   constexpr void push_back(auto &&v) noexcept {
     // TODO: throw?
-    if (m_count == array<Tp>::size())
+    if (m_count == capacity())
       return;
 
     (*this)[m_count++] = v;

@@ -21,6 +21,11 @@ public:
 
     (*this)[m_count++] = v;
   }
+  constexpr const Tp &pop_back() noexcept {
+    if (m_count > 0)
+      --m_count;
+    return (*this)[m_count];
+  }
 };
 } // namespace hai
 
@@ -41,5 +46,7 @@ static_assert([] {
   if (data[1] != 33)
     return false;
 
-  return true;
+  if (data.pop_back() != 33)
+    return false;
+  return data.size() == 1;
 }());

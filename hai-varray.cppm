@@ -14,6 +14,13 @@ public:
   }
   [[nodiscard]] constexpr auto size() const noexcept { return m_count; }
 
+  [[nodiscard]] constexpr auto *end() noexcept {
+    return this->begin() + m_count;
+  }
+  [[nodiscard]] constexpr const auto *end() const noexcept {
+    this->begin() + m_count;
+  }
+
   constexpr void push_back(auto &&v) noexcept {
     // TODO: throw?
     if (m_count == capacity())

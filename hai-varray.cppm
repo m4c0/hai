@@ -18,7 +18,7 @@ public:
     return this->begin() + m_count;
   }
   [[nodiscard]] constexpr const auto *end() const noexcept {
-    this->begin() + m_count;
+    return this->begin() + m_count;
   }
 
   constexpr void push_back(auto &&v) noexcept {

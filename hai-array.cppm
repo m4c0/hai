@@ -21,13 +21,13 @@ public:
 
   [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
 
-  constexpr void resize(unsigned size) {
+  constexpr void add_capacity(unsigned qty) {
     auto old = traits::move(m_data);
-    m_data = decltype(m_data)::make(size);
+    m_data = decltype(m_data)::make(qty + m_size);
     for (auto i = 0; i < m_size; i++) {
       (*m_data)[i] = (*old)[i];
     }
-    m_size = size;
+    m_size += qty;
   }
 
   [[nodiscard]] constexpr auto *begin() noexcept { return &(*m_data)[0]; }
@@ -52,10 +52,10 @@ static_assert([] {
   }
   test[2] = 2;
 
-  test.resize(4);
-  if (test[3] != 0)
-    throw 0;
+  test.add_capacity(1);
   if (test.size() != 4)
+    throw 0;
+  if (test[3] != 0)
     throw 0;
 
   unsigned sum = 0;

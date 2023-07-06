@@ -1,5 +1,6 @@
 export module hai:varray;
 import :array;
+import traits;
 
 namespace hai {
 export template <typename Tp> class varray : public array<Tp> {
@@ -26,12 +27,12 @@ public:
     if (m_count == capacity())
       return;
 
-    (*this)[m_count++] = v;
+    (*this)[m_count++] = traits::move(v);
   }
-  constexpr const Tp &pop_back() noexcept {
+  constexpr Tp pop_back() noexcept {
     if (m_count > 0)
       --m_count;
-    return (*this)[m_count];
+    return traits::move((*this)[m_count]);
   }
 };
 } // namespace hai
@@ -56,4 +57,17 @@ static_assert([] {
   if (data.pop_back() != 33)
     return false;
   return data.size() == 1;
+}());
+static_assert([] {
+  struct unmov {
+    constexpr unmov() = default;
+    constexpr unmov(const unmov &) = delete;
+    constexpr unmov(unmov &&) = default;
+    constexpr unmov &operator=(const unmov &) = delete;
+    constexpr unmov &operator=(unmov &&) = default;
+  };
+  hai::varray<unmov> data{4};
+  data.push_back(unmov{});
+  auto p = data.pop_back();
+  return true;
 }());

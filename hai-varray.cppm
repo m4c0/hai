@@ -15,6 +15,10 @@ public:
   }
   [[nodiscard]] constexpr auto size() const noexcept { return m_count; }
 
+  [[nodiscard]] constexpr auto has_capacity() const noexcept {
+    return capacity() > size();
+  }
+
   [[nodiscard]] constexpr auto *end() noexcept {
     return this->begin() + m_count;
   }

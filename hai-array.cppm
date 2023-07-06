@@ -45,7 +45,7 @@ public:
 static_assert([] {
   hai::array<int> test{3};
   if (test.size() != 3)
-    throw 0;
+    return false;
 
   for (auto &i : test) {
     i = 1;
@@ -54,9 +54,9 @@ static_assert([] {
 
   test.add_capacity(1);
   if (test.size() != 4)
-    throw 0;
+    return false;
   if (test[3] != 0)
-    throw 0;
+    return false;
 
   unsigned sum = 0;
   const auto &t = test;

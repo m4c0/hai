@@ -21,14 +21,18 @@ public:
 
   [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
 
-  constexpr void add_capacity(unsigned qty) {
+  constexpr void set_capacity(unsigned qty) {
+    if (qty < m_size)
+      return;
+
     auto old = traits::move(m_data);
-    m_data = decltype(m_data)::make(qty + m_size);
+    m_data = decltype(m_data)::make(qty);
     for (auto i = 0; i < m_size; i++) {
       (*m_data)[i] = (*old)[i];
     }
-    m_size += qty;
+    m_size = qty;
   }
+  constexpr void add_capacity(unsigned qty) { set_capacity(qty + m_size); }
 
   [[nodiscard]] constexpr auto *begin() noexcept { return &(*m_data)[0]; }
   [[nodiscard]] constexpr const auto *begin() const noexcept {

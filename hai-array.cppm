@@ -5,7 +5,7 @@ import traits;
 namespace hai {
 export template <typename Tp> class array {
   holder<Tp[]> m_data{};
-  unsigned m_size;
+  unsigned m_size{};
 
 public:
   constexpr array() noexcept = default;

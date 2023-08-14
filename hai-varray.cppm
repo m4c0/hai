@@ -4,6 +4,8 @@ import traits;
 
 namespace hai {
 export template <typename Tp> class varray : public array<Tp> {
+  static constexpr const auto initial_auto_capacity = 16;
+
   unsigned m_count{};
 
 public:
@@ -28,7 +30,7 @@ public:
 
   constexpr void push_back_doubling(auto &&v) noexcept {
     if (m_count == capacity()) {
-      this->add_capacity(size());
+      this->add_capacity(size() == 0 ? initial_auto_capacity : size());
     }
 
     (*this)[m_count++] = traits::move(v);
@@ -81,7 +83,12 @@ static_assert([] {
   if (data[2] != 30)
     return false;
   return data.size() == 3 && data.capacity() == 4;
-});
+}());
+static_assert([] {
+  hai::varray<int> data{};
+  data.push_back_doubling(0);
+  return data.size() == 1;
+}());
 static_assert([] {
   struct unmov {
     constexpr unmov() = default;

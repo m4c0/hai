@@ -26,6 +26,13 @@ public:
     return this->begin() + m_count;
   }
 
+  constexpr void push_back_doubling(auto &&v) noexcept {
+    if (m_count == capacity()) {
+      this->add_capacity(size());
+    }
+
+    (*this)[m_count++] = traits::move(v);
+  }
   constexpr void push_back(auto &&v) noexcept {
     // TODO: throw?
     if (m_count == capacity())
@@ -62,6 +69,19 @@ static_assert([] {
     return false;
   return data.size() == 1;
 }());
+static_assert([] {
+  hai::varray<int> data{1};
+  data.push_back_doubling(10);
+  data.push_back_doubling(20);
+  data.push_back_doubling(30);
+  if (data[0] != 10)
+    return false;
+  if (data[1] != 20)
+    return false;
+  if (data[2] != 30)
+    return false;
+  return data.size() == 3 && data.capacity() == 4;
+});
 static_assert([] {
   struct unmov {
     constexpr unmov() = default;

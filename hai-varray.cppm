@@ -28,6 +28,13 @@ public:
     return this->begin() + m_count;
   }
 
+  constexpr void truncate(unsigned c) noexcept {
+    if (c >= m_count)
+      return;
+
+    m_count = c;
+  }
+
   constexpr void push_back_doubling(auto &&v) noexcept {
     if (m_count == capacity()) {
       this->add_capacity(size() == 0 ? initial_auto_capacity : size());

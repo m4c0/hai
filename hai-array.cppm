@@ -43,7 +43,15 @@ public:
   [[nodiscard]] constexpr const auto *end() const noexcept {
     return &(*m_data)[m_size];
   }
+
+  [[nodiscard]] static constexpr auto make(auto... args) {
+    array<Tp> res{sizeof...(args)};
+    unsigned i = 0;
+    ((res[i++] = args), ...);
+    return res;
+  }
 };
+
 } // namespace hai
 
 static_assert([] {
@@ -69,4 +77,16 @@ static_assert([] {
   }
 
   return sum == 4;
+}());
+static_assert([] {
+  auto arr = hai::array<int>::make(7, 4, 1);
+  if (arr.size() != 3)
+    throw 0;
+  if (arr[0] != 7)
+    throw 0;
+  if (arr[1] != 4)
+    throw 0;
+  if (arr[2] != 1)
+    throw 0;
+  return true;
 }());

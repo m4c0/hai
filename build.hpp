@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ecow.hpp"
+#include "../ecow/ecow.hpp"
 
 inline auto hai() {
   using namespace ecow;

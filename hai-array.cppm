@@ -71,7 +71,6 @@ static_assert([] {
     return false;
 
   unsigned sum = 0;
-  const auto &t = test;
   for (auto &i : test) {
     sum += i;
   }

@@ -106,6 +106,6 @@ static_assert([] {
   };
   hai::varray<unmov> data{4};
   data.push_back(unmov{});
-  auto p = data.pop_back();
+  [[maybe_unused]] auto p = data.pop_back();
   return true;
 }());

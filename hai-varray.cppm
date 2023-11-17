@@ -28,6 +28,10 @@ public:
     return this->begin() + m_count;
   }
 
+  [[nodiscard]] constexpr auto back() const noexcept {
+    return (*this)[m_count - 1];
+  }
+
   constexpr void truncate(unsigned c) noexcept {
     if (c >= m_count)
       return;
@@ -74,6 +78,8 @@ static_assert([] {
   if (data[1] != 33)
     return false;
 
+  if (data.back() != 33)
+    return false;
   if (data.pop_back() != 33)
     return false;
   return data.size() == 1;

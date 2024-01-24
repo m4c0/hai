@@ -14,6 +14,7 @@ public:
     return uptr<Tp>{new Tp{traits::fwd<Args>(args)...}};
   }
 
+  constexpr void reset(Tp *p) noexcept { m_holder.reset(p); }
   [[nodiscard]] constexpr Tp *release() noexcept { return m_holder.release(); }
 
   [[nodiscard]] constexpr operator bool() const noexcept {
@@ -45,6 +46,13 @@ static_assert([] {
 static_assert([] {
   uptr<bool> a = uptr<bool>::make(true);
   a = traits::move(a);
+  return a && *a;
+}());
+static_assert([] {
+  uptr<bool> a = uptr<bool>::make(false);
+  auto *b = new bool{true};
+  a.reset(b);
+  a.reset(b);
   return a && *a;
 }());
 } // namespace hai

@@ -30,6 +30,12 @@ public:
     return *this;
   }
 
+  constexpr void reset(Tp p) noexcept {
+    if (m_ptr != p) {
+      reset();
+      m_ptr = p;
+    }
+  }
   [[nodiscard]] constexpr auto release() noexcept {
     auto res = m_ptr;
     m_ptr = {};

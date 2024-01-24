@@ -42,4 +42,9 @@ static_assert([] {
   uptr<bool> b{a.release()};
   return !a && b && *b;
 }());
+static_assert([] {
+  uptr<bool> a = uptr<bool>::make(true);
+  a = traits::move(a);
+  return a && *a;
+}());
 } // namespace hai

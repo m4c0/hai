@@ -38,6 +38,12 @@ public:
 
     m_count = c;
   }
+  constexpr void expand(unsigned c) noexcept {
+    if (c <= m_count || c > capacity())
+      return;
+
+    m_count = c;
+  }
 
   constexpr void push_back_doubling(auto &&v) noexcept {
     if (m_count == capacity()) {

@@ -4,9 +4,9 @@ export import traits;
 
 namespace hai {
 export template <typename Ret, typename... Args> class fn : no::copy {
-  void *m_ptr;
-  Ret (*m_wrap)(void *, Args &&...);
-  void (*m_del)(void *);
+  void *m_ptr = nullptr;
+  Ret (*m_wrap)(void *, Args &&...) = nullptr;
+  void (*m_del)(void *) = nullptr;
 
   void clear() {
     m_ptr = nullptr;
@@ -20,6 +20,7 @@ export template <typename Ret, typename... Args> class fn : no::copy {
   }
 
 public:
+  constexpr fn() = default;
   fn(traits::is_callable_r<Ret, Args...> auto &&fn) {
     using T = traits::remove_ref_t<decltype(fn)>;
     m_ptr = new T{traits::fwd<T>(fn)};

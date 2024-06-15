@@ -1,5 +1,6 @@
 export module hai;
 export import :array;
+export import :fn;
 export import :holder;
 export import :cstr;
 export import :pimpl;

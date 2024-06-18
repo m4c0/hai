@@ -9,57 +9,51 @@ export template <typename Tp> class varray : public array<Tp> {
   unsigned m_count{};
 
 public:
-  constexpr varray() noexcept = default;
+  constexpr varray() = default;
   constexpr explicit varray(unsigned capacity) : array<Tp>{capacity} {}
 
-  [[nodiscard]] constexpr auto capacity() const noexcept {
-    return array<Tp>::size();
-  }
-  [[nodiscard]] constexpr auto size() const noexcept { return m_count; }
+  [[nodiscard]] constexpr auto capacity() const { return array<Tp>::size(); }
+  [[nodiscard]] constexpr auto size() const { return m_count; }
 
-  [[nodiscard]] constexpr auto has_capacity() const noexcept {
+  [[nodiscard]] constexpr auto has_capacity() const {
     return capacity() > size();
   }
 
-  [[nodiscard]] constexpr auto *end() noexcept {
-    return this->begin() + m_count;
-  }
-  [[nodiscard]] constexpr const auto *end() const noexcept {
+  [[nodiscard]] constexpr auto *end() { return this->begin() + m_count; }
+  [[nodiscard]] constexpr const auto *end() const {
     return this->begin() + m_count;
   }
 
-  [[nodiscard]] constexpr auto back() const noexcept {
-    return (*this)[m_count - 1];
-  }
+  [[nodiscard]] constexpr auto back() const { return (*this)[m_count - 1]; }
 
-  constexpr void truncate(unsigned c) noexcept {
+  constexpr void truncate(unsigned c) {
     if (c >= m_count)
       return;
 
     m_count = c;
   }
-  constexpr void expand(unsigned c) noexcept {
+  constexpr void expand(unsigned c) {
     if (c <= m_count || c > capacity())
       return;
 
     m_count = c;
   }
 
-  constexpr void push_back_doubling(auto &&v) noexcept {
+  constexpr void push_back_doubling(auto &&v) {
     if (m_count == capacity()) {
       this->add_capacity(size() == 0 ? initial_auto_capacity : size());
     }
 
     (*this)[m_count++] = traits::move(v);
   }
-  constexpr void push_back(auto &&v) noexcept {
+  constexpr void push_back(auto &&v) {
     // TODO: throw?
     if (m_count == capacity())
       return;
 
     (*this)[m_count++] = traits::move(v);
   }
-  constexpr Tp pop_back() noexcept {
+  constexpr Tp pop_back() {
     if (m_count > 0)
       --m_count;
     return traits::move((*this)[m_count]);

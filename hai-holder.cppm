@@ -14,9 +14,9 @@ export template <typename Tp, typename Del = deleter<Tp>> class value_holder {
   }
 
 public:
-  constexpr value_holder() noexcept = default;
-  explicit constexpr value_holder(Tp p) noexcept : m_ptr{p} {}
-  constexpr ~value_holder() noexcept { reset(); }
+  constexpr value_holder() = default;
+  explicit constexpr value_holder(Tp p) : m_ptr{p} {}
+  constexpr ~value_holder() { reset(); }
 
   value_holder(const value_holder &) = delete;
   value_holder &operator=(const value_holder &) = delete;
@@ -30,26 +30,24 @@ public:
     return *this;
   }
 
-  constexpr void reset(Tp p) noexcept {
+  constexpr void reset(Tp p) {
     if (m_ptr != p) {
       reset();
       m_ptr = p;
     }
   }
-  [[nodiscard]] constexpr auto release() noexcept {
+  [[nodiscard]] constexpr auto release() {
     auto res = m_ptr;
     m_ptr = {};
     return res;
   }
 
-  [[nodiscard]] constexpr auto &operator*() noexcept { return m_ptr; }
-  [[nodiscard]] constexpr const auto &operator*() const noexcept {
-    return m_ptr;
-  }
+  [[nodiscard]] constexpr auto &operator*() { return m_ptr; }
+  [[nodiscard]] constexpr const auto &operator*() const { return m_ptr; }
 };
 
 template <typename Tp> struct deleter<Tp *> {
-  constexpr void operator()(Tp *f) const noexcept { delete f; }
+  constexpr void operator()(Tp *f) const { delete f; }
 };
 export template <typename Tp, typename Del = deleter<Tp *>>
 struct holder : value_holder<Tp *, Del> {
@@ -58,7 +56,7 @@ struct holder : value_holder<Tp *, Del> {
 };
 
 template <typename Tp> struct deleter<Tp[]> {
-  constexpr void operator()(Tp *f) const noexcept { delete[] f; }
+  constexpr void operator()(Tp *f) const { delete[] f; }
 };
 export template <typename Tp> struct holder<Tp[]> : holder<Tp, deleter<Tp[]>> {
   using holder<Tp, deleter<Tp[]>>::holder;

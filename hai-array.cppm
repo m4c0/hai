@@ -8,18 +8,18 @@ export template <typename Tp> class array {
   unsigned m_size{};
 
 public:
-  constexpr array() noexcept = default;
+  constexpr array() = default;
   constexpr explicit array(unsigned size)
       : m_data{decltype(m_data)::make(size)}, m_size{size} {}
 
-  [[nodiscard]] constexpr auto &operator[](unsigned idx) noexcept {
+  [[nodiscard]] constexpr auto &operator[](unsigned idx) {
     return (*m_data)[idx];
   }
-  [[nodiscard]] constexpr const auto &operator[](unsigned idx) const noexcept {
+  [[nodiscard]] constexpr const auto &operator[](unsigned idx) const {
     return (*m_data)[idx];
   }
 
-  [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
+  [[nodiscard]] constexpr auto size() const { return m_size; }
 
   constexpr void set_capacity(unsigned qty) {
     if (qty < m_size)
@@ -34,15 +34,11 @@ public:
   }
   constexpr void add_capacity(unsigned qty) { set_capacity(qty + m_size); }
 
-  [[nodiscard]] constexpr auto *begin() noexcept { return &(*m_data)[0]; }
-  [[nodiscard]] constexpr const auto *begin() const noexcept {
-    return &(*m_data)[0];
-  }
+  [[nodiscard]] constexpr auto *begin() { return &(*m_data)[0]; }
+  [[nodiscard]] constexpr const auto *begin() const { return &(*m_data)[0]; }
 
-  [[nodiscard]] constexpr auto *end() noexcept { return &(*m_data)[m_size]; }
-  [[nodiscard]] constexpr const auto *end() const noexcept {
-    return &(*m_data)[m_size];
-  }
+  [[nodiscard]] constexpr auto *end() { return &(*m_data)[m_size]; }
+  [[nodiscard]] constexpr const auto *end() const { return &(*m_data)[m_size]; }
 
   [[nodiscard]] static constexpr auto make(auto... args) {
     array<Tp> res{sizeof...(args)};

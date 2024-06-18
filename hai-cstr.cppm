@@ -13,12 +13,12 @@ public:
   explicit constexpr cstr(unsigned sz)
       : m_buf{new char[sz + 1]{}}, m_size{sz} {}
 
-  [[nodiscard]] constexpr char *data() noexcept { return *m_buf; }
-  [[nodiscard]] constexpr const char *data() const noexcept { return *m_buf; }
-  [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
+  [[nodiscard]] constexpr char *data() { return *m_buf; }
+  [[nodiscard]] constexpr const char *data() const { return *m_buf; }
+  [[nodiscard]] constexpr auto size() const { return m_size; }
 
-  [[nodiscard]] constexpr auto begin() const noexcept { return *m_buf; }
-  [[nodiscard]] constexpr auto end() const noexcept { return *m_buf + m_size; }
+  [[nodiscard]] constexpr auto begin() const { return *m_buf; }
+  [[nodiscard]] constexpr auto end() const { return *m_buf + m_size; }
 };
 
 static_assert([] {

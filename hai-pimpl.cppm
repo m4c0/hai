@@ -27,9 +27,9 @@ export template <typename Tp> class pimpl {
   }
 
 public:
-  constexpr pimpl() noexcept = default;
-  constexpr pimpl(Tp p, deleter_t d) noexcept : m_ptr{p}, m_del{d} {}
-  constexpr ~pimpl() noexcept { reset(); }
+  constexpr pimpl() = default;
+  constexpr pimpl(Tp p, deleter_t d) : m_ptr{p}, m_del{d} {}
+  constexpr ~pimpl() { reset(); }
 
   pimpl(const pimpl &) = delete;
   pimpl &operator=(const pimpl &) = delete;
@@ -43,22 +43,20 @@ public:
     return *this;
   }
 
-  constexpr void reset(Tp p) noexcept {
+  constexpr void reset(Tp p) {
     if (m_ptr != p) {
       reset();
       m_ptr = p;
     }
   }
-  [[nodiscard]] constexpr auto release() noexcept {
+  [[nodiscard]] constexpr auto release() {
     auto res = m_ptr;
     m_ptr = {};
     return res;
   }
 
-  [[nodiscard]] constexpr auto &operator*() noexcept { return m_ptr; }
-  [[nodiscard]] constexpr const auto &operator*() const noexcept {
-    return m_ptr;
-  }
+  [[nodiscard]] constexpr auto &operator*() { return m_ptr; }
+  [[nodiscard]] constexpr const auto &operator*() const { return m_ptr; }
 };
 } // namespace hai
 

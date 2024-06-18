@@ -11,16 +11,14 @@ public:
   constexpr sptr_shr() = default;
   explicit constexpr sptr_shr(Tp *ptr) : m_count{1}, m_holder{ptr} {}
 
-  constexpr void incr_use() noexcept { m_count++; }
-  constexpr bool decr_use() noexcept {
+  constexpr void incr_use() { m_count++; }
+  constexpr bool decr_use() {
     m_count--;
     return m_count == 0;
   }
 
-  [[nodiscard]] constexpr Tp *operator*() noexcept { return *m_holder; }
-  [[nodiscard]] constexpr const Tp *operator*() const noexcept {
-    return *m_holder;
-  }
+  [[nodiscard]] constexpr Tp *operator*() { return *m_holder; }
+  [[nodiscard]] constexpr const Tp *operator*() const { return *m_holder; }
 };
 
 export template <typename Tp> class sptr {
@@ -32,10 +30,10 @@ export template <typename Tp> class sptr {
   }
 
 public:
-  constexpr sptr() noexcept = default;
+  constexpr sptr() = default;
   explicit constexpr sptr(Tp *ptr) : m_shr{new sptr_shr{ptr}} {}
 
-  constexpr ~sptr() noexcept { reset(); }
+  constexpr ~sptr() { reset(); }
 
   constexpr sptr(sptr &&o) : m_shr{o.m_shr} { o.m_shr = nullptr; }
   constexpr sptr &operator=(sptr &&o) {
@@ -64,18 +62,12 @@ public:
     return sptr<Tp>{new Tp{traits::fwd<Args>(args)...}};
   }
 
-  [[nodiscard]] constexpr operator bool() const noexcept {
-    return m_shr != nullptr;
-  }
+  [[nodiscard]] constexpr operator bool() const { return m_shr != nullptr; }
 
-  [[nodiscard]] constexpr Tp &operator*() noexcept { return ***m_shr; }
-  [[nodiscard]] constexpr const Tp &operator*() const noexcept {
-    return ***m_shr;
-  }
-  [[nodiscard]] constexpr Tp *operator->() noexcept { return **m_shr; }
-  [[nodiscard]] constexpr const Tp *operator->() const noexcept {
-    return **m_shr;
-  }
+  [[nodiscard]] constexpr Tp &operator*() { return ***m_shr; }
+  [[nodiscard]] constexpr const Tp &operator*() const { return ***m_shr; }
+  [[nodiscard]] constexpr Tp *operator->() { return **m_shr; }
+  [[nodiscard]] constexpr const Tp *operator->() const { return **m_shr; }
 };
 static_assert(*sptr<bool>::make(true));
 static_assert(sptr<bool>::make(false) && !*sptr<bool>::make(false));

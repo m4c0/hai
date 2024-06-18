@@ -7,28 +7,22 @@ export template <typename Tp> class uptr {
   holder<Tp> m_holder;
 
 public:
-  constexpr uptr() noexcept = default;
+  constexpr uptr() = default;
   explicit constexpr uptr(Tp *ptr) : m_holder{ptr} {}
 
   template <typename... Args> static constexpr uptr<Tp> make(Args &&...args) {
     return uptr<Tp>{new Tp{traits::fwd<Args>(args)...}};
   }
 
-  constexpr void reset(Tp *p) noexcept { m_holder.reset(p); }
-  [[nodiscard]] constexpr Tp *release() noexcept { return m_holder.release(); }
+  constexpr void reset(Tp *p) { m_holder.reset(p); }
+  [[nodiscard]] constexpr Tp *release() { return m_holder.release(); }
 
-  [[nodiscard]] constexpr operator bool() const noexcept {
-    return *m_holder != nullptr;
-  }
+  [[nodiscard]] constexpr operator bool() const { return *m_holder != nullptr; }
 
-  [[nodiscard]] constexpr Tp &operator*() noexcept { return **m_holder; }
-  [[nodiscard]] constexpr const Tp &operator*() const noexcept {
-    return **m_holder;
-  }
-  [[nodiscard]] constexpr Tp *operator->() noexcept { return *m_holder; }
-  [[nodiscard]] constexpr const Tp *operator->() const noexcept {
-    return *m_holder;
-  }
+  [[nodiscard]] constexpr Tp &operator*() { return **m_holder; }
+  [[nodiscard]] constexpr const Tp &operator*() const { return **m_holder; }
+  [[nodiscard]] constexpr Tp *operator->() { return *m_holder; }
+  [[nodiscard]] constexpr const Tp *operator->() const { return *m_holder; }
 };
 static_assert(*uptr<bool>::make(true));
 static_assert(uptr<bool>::make(false) && !*uptr<bool>::make(false));

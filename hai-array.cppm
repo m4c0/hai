@@ -28,7 +28,7 @@ public:
     auto old = traits::move(m_data);
     m_data = decltype(m_data)::make(qty);
     for (auto i = 0; i < m_size; i++) {
-      (*m_data)[i] = (*old)[i];
+      (*m_data)[i] = traits::move((*old)[i]);
     }
     m_size = qty;
   }

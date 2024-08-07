@@ -37,6 +37,8 @@ public:
     m_wrap = o.m_wrap;
     m_del = o.m_del;
     o.clear();
+
+    return *this;
   }
 
   constexpr explicit operator bool() const { return m_ptr != nullptr; }

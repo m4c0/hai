@@ -25,6 +25,10 @@ public:
     using T = traits::remove_ref_t<decltype(fn)>;
     m_data = hai::sptr<hld>{new shrd<T>{traits::fwd<T>(fn)}};
   }
+  constexpr fn(Ret (*fn)(Args...)) {
+    using T = Ret (*)(Args...);
+    m_data = hai::sptr<hld>{new shrd<T>{traits::fwd<T>(fn)}};
+  }
 
   constexpr explicit operator bool() const { return m_data; }
 

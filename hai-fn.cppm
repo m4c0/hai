@@ -43,6 +43,6 @@ public:
 
   constexpr explicit operator bool() const { return m_ptr != nullptr; }
 
-  Ret operator()(Args &&...args) { return m_wrap(m_ptr, traits::fwd<Args>(args)...); };
+  Ret operator()(Args &&...args) const { return m_wrap(m_ptr, traits::fwd<Args>(args)...); };
 };
 } // namespace hai

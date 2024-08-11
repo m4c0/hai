@@ -32,7 +32,7 @@ public:
 
   constexpr explicit operator bool() const { return m_data; }
 
-  constexpr Ret operator()(Args &&...args) const { return (*m_data)(traits::fwd<Args>(args)...); };
+  constexpr Ret operator()(auto &&...args) const { return (*m_data)(traits::fwd<Args>(args)...); };
 };
 } // namespace hai
 

@@ -1,48 +1,28 @@
 export module hai:fn;
-import no;
+import :sptr;
 export import traits;
 
 namespace hai {
-export template <typename Ret, typename... Args> class fn : no::copy {
-  void *m_ptr = nullptr;
-  Ret (*m_wrap)(void *, Args &&...) = nullptr;
-  void (*m_del)(void *) = nullptr;
+export template <typename Ret, typename... Args> class fn {
+  struct shrd {
+    void *ptr = nullptr;
+    Ret (*wrap)(void *, Args &&...) = nullptr;
 
-  void clear() {
-    m_ptr = nullptr;
-    m_wrap = nullptr;
-    m_del = nullptr;
-  }
-  void del() {
-    if (m_ptr && m_del) m_del(m_ptr);
-    clear();
-  }
+    ~shrd() { ::operator delete(ptr); }
+  };
+  hai::sptr<shrd> m_data{};
 
 public:
   constexpr fn() = default;
   fn(traits::is_callable_r<Ret, Args...> auto &&fn) {
     using T = traits::remove_ref_t<decltype(fn)>;
-    m_ptr = new T{ traits::fwd<T>(fn) };
-    m_wrap = [](void *ptr, Args &&...args) -> Ret { return (*reinterpret_cast<T *>(ptr))(traits::fwd<Args>(args)...); };
-    m_del = [](void *ptr) -> void { delete reinterpret_cast<T *>(ptr); };
-  }
-  ~fn() { del(); }
-
-  fn(fn &&o) : m_ptr{ o.m_ptr }, m_wrap{ o.m_wrap }, m_del{ o.m_del } { o.clear(); }
-  fn &operator=(fn &&o) {
-    if (&o == this) return *this;
-
-    del();
-    m_ptr = o.m_ptr;
-    m_wrap = o.m_wrap;
-    m_del = o.m_del;
-    o.clear();
-
-    return *this;
+    m_data = hai::sptr<shrd>{new shrd{}};
+    m_data->ptr = new T{ traits::fwd<T>(fn) };
+    m_data->wrap = [](void *ptr, Args &&...args) -> Ret { return (*reinterpret_cast<T *>(ptr))(traits::fwd<Args>(args)...); };
   }
 
-  constexpr explicit operator bool() const { return m_ptr != nullptr; }
+  constexpr explicit operator bool() const { return m_data; }
 
-  Ret operator()(Args &&...args) const { return m_wrap(m_ptr, traits::fwd<Args>(args)...); };
+  Ret operator()(Args &&...args) const { return m_data->wrap(m_data->ptr, traits::fwd<Args>(args)...); };
 };
 } // namespace hai

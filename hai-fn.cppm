@@ -23,6 +23,8 @@ public:
   constexpr fn() = default;
   constexpr fn(const fn<Ret, Args...> &) = default;
   constexpr fn(fn<Ret, Args...> &&) = default;
+  constexpr fn & operator=(const fn<Ret, Args...> &) = default;
+  constexpr fn & operator=(fn<Ret, Args...> &&) = default;
 
   template<typename T>
     requires traits::is_callable_r<T, Ret, Args...> && (!traits::same_as<traits::remove_ref_t<T>, fn<Ret, Args...>>)

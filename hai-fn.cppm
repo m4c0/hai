@@ -1,19 +1,20 @@
 export module hai:fn;
 import :sptr;
+import no;
 export import traits;
 
 namespace hai {
 export template <typename Ret, typename... Args> class fn {
   struct hld {
     constexpr virtual ~hld() {}
-    constexpr virtual Ret operator()(Args &&... args) const = 0;
+    constexpr virtual Ret operator()(Args &&... args) = 0;
   };
   template<typename T>
   struct shrd : hld {
     T ptr;
 
-    constexpr shrd(auto p) : ptr{p} {}
-    constexpr Ret operator()(Args &&... args) const override {
+    constexpr shrd(auto && p) : ptr{traits::move(p)} {}
+    constexpr Ret operator()(Args &&... args) override {
       return ptr(traits::fwd<Args>(args)...);
     }
   };
@@ -39,7 +40,7 @@ public:
 
   constexpr explicit operator bool() const { return m_data; }
 
-  constexpr Ret operator()(auto &&...args) const { return (*m_data)(traits::fwd<Args>(args)...); };
+  constexpr Ret operator()(auto &&...args) { return (*m_data)(traits::fwd<Args>(args)...); };
 };
 } // namespace hai
 
@@ -51,8 +52,14 @@ static_assert([]{
 
 static constexpr bool test() { return true; }
 static_assert([]{
-  const hai::fn<bool> fn{test};
+  hai::fn<bool> fn{test};
   hai::fn<bool> fn2{fn};
   hai::fn<bool> fn3{traits::move(fn2)};
   return fn() && fn3();
+}());
+
+static_assert([] {
+  struct x : no::copy { constexpr bool ok() { return true; } };
+  hai::fn<bool> fn{[xx = x()] mutable { return xx.ok(); }};
+  return fn();
 }());

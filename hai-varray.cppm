@@ -25,6 +25,7 @@ public:
   }
 
   [[nodiscard]] constexpr auto back() const { return (*this)[m_count - 1]; }
+  [[nodiscard]] constexpr auto & back() { return (*this)[m_count - 1]; }
 
   constexpr void truncate(unsigned c) {
     if (c >= m_count)

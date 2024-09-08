@@ -38,6 +38,9 @@ public:
     m_data = hai::sptr<hld>{new shrd<T>{traits::fwd<T>(fn)}};
   }
 
+  template<typename T>
+  constexpr fn(T * t, Ret (T::*m)(Args...)) : fn([t, m](Args &&... args) -> Ret { return (t->*m)(args...); }) {}
+
   constexpr explicit operator bool() const { return m_data; }
 
   constexpr Ret operator()(auto &&...args) { return (*m_data)(traits::fwd<Args>(args)...); };
@@ -50,12 +53,23 @@ static_assert([]{
   return fn(2, 3) == 6;
 }());
 
-static constexpr bool test() { return true; }
 static_assert([]{
-  hai::fn<bool> fn{test};
+  struct t {
+    static constexpr bool test() { return true; }
+  };
+  hai::fn<bool> fn{t::test};
   hai::fn<bool> fn2{fn};
   hai::fn<bool> fn3{traits::move(fn2)};
   return fn() && fn3();
+}());
+
+static_assert([] {
+  struct t {
+    constexpr bool test() { return true; }
+  } tt;
+  
+  hai::fn<bool> fn { &tt, &t::test };
+  return fn();
 }());
 
 static_assert([] {

@@ -4,7 +4,7 @@ import :varray;
 import traits;
 
 namespace hai {
-  template <typename T> class chain {
+  export template <typename T> class chain {
     hai::varray<T> m_data;
     unsigned m_size {};
     hai::uptr<chain<T>> m_next {};

@@ -65,10 +65,10 @@ namespace hai {
       m_size++;
     }
 
-    [[nodiscard]] constexpr auto begin() const { return cit { this }; }
+    [[nodiscard]] constexpr auto begin() const { return cit { m_size == 0 ? nullptr : this }; }
     [[nodiscard]] constexpr auto end() const { return cit { nullptr }; }
 
-    [[nodiscard]] constexpr auto begin() { return mit { this }; }
+    [[nodiscard]] constexpr auto begin() { return mit { m_size == 0 ? nullptr : this }; }
     [[nodiscard]] constexpr auto end() { return mit { nullptr }; }
 
     [[nodiscard]] constexpr unsigned size() const { return m_size; }
@@ -90,6 +90,8 @@ static_assert([] {
   constexpr const auto el_count = 16;
 
   hai::chain<int> c { 4 };
+  if (c.begin() != c.end()) throw 0;
+
   for (auto i = 0; i < el_count; i++) c.push_back(i * i);
 
   if (c.size() != el_count) throw 0;

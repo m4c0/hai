@@ -10,13 +10,28 @@ namespace hai {
     hai::uptr<chain<T>> m_next {};
     chain<T> * m_last { this };
 
-    struct it {
+    struct mit {
+      chain<T> * m_h;
+      unsigned m_pos {};
+
+      [[nodiscard]] constexpr bool operator==(const mit & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
+
+      [[nodiscard]] constexpr mit & operator++() {
+        m_pos++;
+        if (m_pos < m_h->m_data.size()) return *this;
+        *this = {};
+        return *this;
+      }
+
+      [[nodiscard]] constexpr T & operator*() { return m_h->m_data[m_pos]; }
+    };
+    struct cit {
       const chain<T> * m_h;
       unsigned m_pos {};
 
-      [[nodiscard]] constexpr bool operator==(const it & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
+      [[nodiscard]] constexpr bool operator==(const cit & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
 
-      [[nodiscard]] constexpr it & operator++() {
+      [[nodiscard]] constexpr cit & operator++() {
         m_pos++;
         if (m_pos < m_h->m_data.size()) return *this;
         *this = {};
@@ -48,8 +63,11 @@ namespace hai {
       m_size++;
     }
 
-    [[nodiscard]] constexpr auto begin() const { return it { this }; }
-    [[nodiscard]] constexpr auto end() const { return it { nullptr }; }
+    [[nodiscard]] constexpr auto begin() const { return cit { this }; }
+    [[nodiscard]] constexpr auto end() const { return cit { nullptr }; }
+
+    [[nodiscard]] constexpr auto begin() { return mit { this }; }
+    [[nodiscard]] constexpr auto end() { return mit { nullptr }; }
 
     [[nodiscard]] constexpr unsigned size() const { return m_size; }
   };

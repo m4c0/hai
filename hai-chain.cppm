@@ -5,6 +5,8 @@ import traits;
 
 namespace hai {
   export template <typename T> class chain {
+    struct overflow {};
+
     hai::varray<T> m_data;
     unsigned m_size {};
     hai::uptr<chain<T>> m_next {};
@@ -70,11 +72,22 @@ namespace hai {
     [[nodiscard]] constexpr auto end() { return mit { nullptr }; }
 
     [[nodiscard]] constexpr unsigned size() const { return m_size; }
+
+    [[nodiscard]] constexpr const T & seek(unsigned i) const {
+      if (i < m_data.size()) return m_data[i];
+      if (!m_next) throw overflow {};
+      return m_next->seek(i - m_data.size());
+    }
+    [[nodiscard]] constexpr T & seek(unsigned i) {
+      if (i < m_data.size()) return m_data[i];
+      if (!m_next) throw overflow {};
+      return m_next->seek(i - m_data.size());
+    }
   };
 } // namespace hai
 
 static_assert([] {
-  constexpr const auto el_count = 5;
+  constexpr const auto el_count = 16;
 
   hai::chain<int> c { 4 };
   for (auto i = 0; i < el_count; i++) c.push_back(i * i);
@@ -88,5 +101,5 @@ static_assert([] {
     i++;
   }
 
-  return true;
+  return c.seek(5) == 25;
 }());

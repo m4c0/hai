@@ -34,6 +34,7 @@ namespace hai {
     }
 
   public:
+    constexpr chain() : chain { 16 } {}
     explicit constexpr chain(unsigned bucket_size) : m_data { bucket_size } {}
 
     constexpr void push_back(const T & t) {

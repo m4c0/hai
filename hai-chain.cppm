@@ -4,16 +4,16 @@ import :varray;
 import traits;
 
 namespace hai {
-  export template <typename T> class chain {
+  export template <typename T> class chain;
+  template <typename T> struct chain_data {
     struct overflow {};
 
     hai::varray<T> m_data;
     unsigned m_size {};
     hai::uptr<chain<T>> m_next {};
-    chain<T> * m_last { this };
 
     struct mit {
-      chain<T> * m_h;
+      chain_data<T> * m_h;
       unsigned m_pos {};
 
       [[nodiscard]] constexpr bool operator==(const mit & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
@@ -28,7 +28,7 @@ namespace hai {
       [[nodiscard]] constexpr T & operator*() { return m_h->m_data[m_pos]; }
     };
     struct cit {
-      const chain<T> * m_h;
+      const chain_data<T> * m_h;
       unsigned m_pos {};
 
       [[nodiscard]] constexpr bool operator==(const cit & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
@@ -43,27 +43,9 @@ namespace hai {
       [[nodiscard]] constexpr const T & operator*() const { return m_h->m_data[m_pos]; }
     };
 
-    constexpr void find_ptr() {
-      if (m_last->m_data.capacity() == m_last->m_data.size()) {
-        m_last->m_next.reset(new chain<T> { m_data.capacity() });
-        m_last = &*m_next;
-      }
-    }
-
   public:
-    constexpr chain() : chain { 16 } {}
-    explicit constexpr chain(unsigned bucket_size) : m_data { bucket_size } {}
-
-    constexpr void push_back(const T & t) {
-      find_ptr();
-      m_last->m_data.push_back(t);
-      m_size++;
-    }
-    constexpr void push_back(T && t) {
-      find_ptr();
-      m_last->m_data.push_back(traits::move(t));
-      m_size++;
-    }
+    constexpr chain_data() : chain_data { 16 } {}
+    explicit constexpr chain_data(unsigned bucket_size) : m_data { bucket_size } {}
 
     [[nodiscard]] constexpr auto begin() const { return cit { m_size == 0 ? nullptr : this }; }
     [[nodiscard]] constexpr auto end() const { return cit { nullptr }; }
@@ -82,6 +64,37 @@ namespace hai {
       if (i < m_data.size()) return m_data[i];
       if (!m_next) throw overflow {};
       return m_next->seek(i - m_data.size());
+    }
+  };
+  export template <typename T> class chain : public chain_data<T> {
+    chain<T> * m_last { this };
+
+    constexpr void find_ptr() {
+      if (m_last->m_data.capacity() == m_last->m_data.size()) {
+        m_last->m_next.reset(new chain<T> { this->m_data.capacity() });
+        m_last = &*this->m_next;
+      }
+    }
+
+  public:
+    using chain_data<T>::chain_data;
+
+    constexpr chain(chain && o) : chain_data<T> { traits::move(o) } { m_last = (o.m_last == &o) ? this : m_last; }
+    constexpr chain & operator=(chain && o) {
+      chain_data<T>::operator=(traits::move(o));
+      m_last = (o.m_last == &o) ? this : m_last;
+      return *this;
+    }
+
+    constexpr void push_back(const T & t) {
+      find_ptr();
+      m_last->m_data.push_back(t);
+      this->m_size++;
+    }
+    constexpr void push_back(T && t) {
+      find_ptr();
+      m_last->m_data.push_back(traits::move(t));
+      this->m_size++;
     }
   };
 } // namespace hai
@@ -104,4 +117,12 @@ static_assert([] {
   }
 
   return c.seek(5) == 25;
+}());
+static_assert([] {
+  hai::chain<int> c {};
+  hai::chain<int> b = traits::move(c);
+
+  b.push_back(100);
+
+  return b.seek(0) == 100;
 }());

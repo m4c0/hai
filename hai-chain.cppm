@@ -26,8 +26,7 @@ namespace hai::chain_impl {
     }
   };
 
-  template<typename T>
-  struct mit {
+  template <typename T> struct mit {
     node<T> * m_h;
     unsigned m_pos {};
 
@@ -59,7 +58,7 @@ namespace hai::chain_impl {
 
     return true;
   }());
-}
+} // namespace hai::chain_impl
 namespace hai {
   export template <typename T> class chain {
     hai::uptr<chain_impl::node<T>> m_first;

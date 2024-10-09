@@ -26,6 +26,21 @@ namespace hai::chain_impl {
     }
   };
 
+  template <typename T> struct cit {
+    const node<T> * m_h;
+    unsigned m_pos {};
+
+    [[nodiscard]] constexpr bool operator==(const cit & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
+
+    [[nodiscard]] constexpr cit & operator++() {
+      m_pos++;
+      if (m_pos < m_h->m_data.size()) return *this;
+      *this = { &*m_h->m_next, 0 };
+      return *this;
+    }
+
+    [[nodiscard]] constexpr const T & operator*() { return m_h->m_data[m_pos]; }
+  };
   template <typename T> struct mit {
     node<T> * m_h;
     unsigned m_pos {};
@@ -80,6 +95,9 @@ namespace hai {
     [[nodiscard]] constexpr auto begin() { return chain_impl::mit<T> { m_size == 0 ? nullptr : &*m_first, 0 }; }
     [[nodiscard]] constexpr auto end() { return chain_impl::mit<T> {}; }
 
+    [[nodiscard]] constexpr auto begin() const { return chain_impl::cit<T> { m_size == 0 ? nullptr : &*m_first, 0 }; }
+    [[nodiscard]] constexpr auto end() const { return chain_impl::cit<T> {}; }
+
     [[nodiscard]] constexpr auto size() const { return m_size; }
 
     [[nodiscard]] constexpr auto & seek(unsigned n) const { return m_first->seek(n); }
@@ -126,4 +144,15 @@ static_assert([] {
   b.push_back(100);
 
   return b.seek(0) == 100;
+}());
+static_assert([] {
+  hai::chain<int> c {};
+  c.push_back(100);
+
+  const auto & b = c;
+  for (auto _ : b) {
+    // just testing if we can const-iterate
+  }
+
+  return true;
 }());

@@ -68,5 +68,5 @@ static_assert([] {
   auto h = holder<bool[]>::make(3);
   (*h)[1] = true;
   return (*h)[1];
-});
+}());
 } // namespace hai

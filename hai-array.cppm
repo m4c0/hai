@@ -11,6 +11,10 @@ public:
   constexpr array() = default;
   constexpr explicit array(unsigned size)
       : m_data{decltype(m_data)::make(size)}, m_size{size} {}
+  template<unsigned N>
+  constexpr array(const Tp (&data)[N]) : array(N) {
+    for (auto i = 0; i < N; i++) (*m_data)[i] = data[i];
+  }
 
   [[nodiscard]] constexpr auto &operator[](unsigned idx) {
     return (*m_data)[idx];
@@ -47,7 +51,6 @@ public:
     return res;
   }
 };
-
 } // namespace hai
 
 static_assert([] {
@@ -83,5 +86,13 @@ static_assert([] {
     throw 0;
   if (arr[2] != 1)
     throw 0;
+  return true;
+}());
+static_assert([] {
+  hai::array<int> arr {{ 7, 4, 1 }};
+  if (arr.size() != 3) throw 0;
+  if (arr[0] != 7) throw 0;
+  if (arr[1] != 4) throw 0;
+  if (arr[2] != 1) throw 0;
   return true;
 }());

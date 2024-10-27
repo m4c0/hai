@@ -17,7 +17,7 @@ namespace hai {
 
     [[nodiscard]] constexpr auto begin() const { return m_data->begin(); }
     [[nodiscard]] constexpr auto end() const { return m_data->end(); }
-    [[nodiscard]] constexpr T & operator[](unsigned idx) const { return (*m_data)[idx]; }
+    [[nodiscard]] constexpr const T & operator[](unsigned idx) const { return (*m_data)[idx]; }
 
     [[nodiscard]] constexpr auto begin() { return m_data->begin(); }
     [[nodiscard]] constexpr auto end() { return m_data->end(); }

@@ -8,3 +8,4 @@ export import :pimpl;
 export import :sptr;
 export import :uptr;
 export import :varray;
+export import :view;

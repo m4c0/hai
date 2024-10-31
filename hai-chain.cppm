@@ -89,6 +89,9 @@ namespace hai {
     }
 
   public:
+    using iterator = chain_impl::mit<T>;
+    using const_iterator = chain_impl::cit<T>;
+
     constexpr chain() : chain { 16 } {}
     constexpr chain(unsigned node_size) : m_first { new chain_impl::node<T> { node_size } }, m_last { &*m_first } {}
 

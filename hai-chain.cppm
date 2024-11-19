@@ -32,7 +32,7 @@ namespace hai::chain_impl {
 
     [[nodiscard]] constexpr bool operator==(const cit & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
 
-    [[nodiscard]] constexpr cit & operator++() {
+    constexpr cit & operator++() {
       m_pos++;
       if (m_pos < m_h->m_data.size()) return *this;
       *this = { &*m_h->m_next, 0 };
@@ -47,7 +47,7 @@ namespace hai::chain_impl {
 
     [[nodiscard]] constexpr bool operator==(const mit & o) const { return m_h == o.m_h && m_pos == o.m_pos; }
 
-    [[nodiscard]] constexpr mit & operator++() {
+    constexpr mit & operator++() {
       m_pos++;
       if (m_pos < m_h->m_data.size()) return *this;
       *this = { &*m_h->m_next, 0 };

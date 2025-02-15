@@ -23,6 +23,7 @@ namespace hai {
     [[nodiscard]] constexpr auto end() { return m_data->end(); }
     [[nodiscard]] constexpr T & operator[](unsigned idx) { return (*m_data)[idx]; }
   };
+  export template<typename T> view(T && ...) -> view<T>;
 }
 
 static_assert([] {

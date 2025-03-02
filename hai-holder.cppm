@@ -46,6 +46,18 @@ public:
   [[nodiscard]] constexpr const auto &operator*() const { return m_ptr; }
 };
 
+template<typename T, void (*Del)(T)>
+struct fn_deleter { constexpr void operator()(T t) { Del(t); } };
+export template<typename T, void (*Del)(T)>
+struct value : value_holder<T, fn_deleter<T, Del>> {
+  using value_holder<T, fn_deleter<T, Del>>::value_holder;
+};
+static_assert([] {
+  static constexpr const auto del = [](int * p) { delete p; };
+  value<int *, del> p { new int };
+  return true;
+}());
+
 template <typename Tp> struct deleter<Tp *> {
   constexpr void operator()(Tp *f) const { delete f; }
 };

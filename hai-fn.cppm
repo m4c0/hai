@@ -41,7 +41,7 @@ public:
   template<typename T>
   constexpr fn(T * t, Ret (T::*m)(Args...)) : fn([t, m](Args &&... args) -> Ret { return (t->*m)(args...); }) {}
   template<typename T>
-  constexpr fn(T * t, Ret (T::*m)(Args...) const) : fn([t, m](Args &&... args) -> Ret { return (t->*m)(args...); }) {}
+  constexpr fn(const T * t, Ret (T::*m)(Args...) const) : fn([t, m](Args &&... args) -> Ret { return (t->*m)(args...); }) {}
 
   constexpr explicit operator bool() const { return m_data; }
 
@@ -88,7 +88,7 @@ static_assert([] {
   return fn();
 }());
 static_assert([] {
-  struct x_t { constexpr bool ok() const { return true; } } x;
+  struct x_t { constexpr bool ok() const { return true; } } const x;
   auto fn = hai::fn { &x, &x_t::ok };
   return fn();
 }());

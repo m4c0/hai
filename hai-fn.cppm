@@ -40,11 +40,15 @@ public:
 
   template<typename T>
   constexpr fn(T * t, Ret (T::*m)(Args...)) : fn([t, m](Args &&... args) -> Ret { return (t->*m)(args...); }) {}
+  template<typename T>
+  constexpr fn(T * t, Ret (T::*m)(Args...) const) : fn([t, m](Args &&... args) -> Ret { return (t->*m)(args...); }) {}
 
   constexpr explicit operator bool() const { return m_data; }
 
   constexpr Ret operator()(auto &&...args) { return (*m_data)(traits::fwd<Args>(args)...); };
 };
+template<typename T, typename Ret, typename... Args> fn(T * t, Ret (T::*m)(Args...)) -> fn<Ret, Args...>;
+template<typename T, typename Ret, typename... Args> fn(T * t, Ret (T::*m)(Args...) const) -> fn<Ret, Args...>;
 } // namespace hai
 
 static_assert([]{
@@ -75,5 +79,16 @@ static_assert([] {
 static_assert([] {
   struct x : no::copy { constexpr bool ok() { return true; } };
   hai::fn<bool> fn{[xx = x()] mutable { return xx.ok(); }};
+  return fn();
+}());
+
+static_assert([] {
+  struct x_t { constexpr bool ok() { return true; } } x;
+  auto fn = hai::fn { &x, &x_t::ok };
+  return fn();
+}());
+static_assert([] {
+  struct x_t { constexpr bool ok() const { return true; } } x;
+  auto fn = hai::fn { &x, &x_t::ok };
   return fn();
 }());

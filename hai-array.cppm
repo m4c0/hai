@@ -16,14 +16,15 @@ public:
     for (auto i = 0; i < N; i++) (*m_data)[i] = data[i];
   }
 
-  [[nodiscard]] constexpr auto &operator[](unsigned idx) {
-    return (*m_data)[idx];
-  }
-  [[nodiscard]] constexpr const auto &operator[](unsigned idx) const {
-    return (*m_data)[idx];
+  [[nodiscard]] constexpr auto & operator[](this auto && self, unsigned idx) {
+    return (*self.m_data)[idx];
   }
 
+  [[nodiscard]] constexpr auto data(this auto && self) { return self.m_data.data(); }
   [[nodiscard]] constexpr auto size() const { return m_size; }
+
+  [[nodiscard]] constexpr auto * begin(this auto && self) { return &self[0]; }
+  [[nodiscard]] constexpr auto * end(this auto && self) { return &self[self.m_size]; }
 
   constexpr void set_capacity(unsigned qty) {
     if (qty < m_size)
@@ -37,12 +38,6 @@ public:
     m_size = qty;
   }
   constexpr void add_capacity(unsigned qty) { set_capacity(qty + m_size); }
-
-  [[nodiscard]] constexpr auto *begin() { return &(*m_data)[0]; }
-  [[nodiscard]] constexpr const auto *begin() const { return &(*m_data)[0]; }
-
-  [[nodiscard]] constexpr auto *end() { return &(*m_data)[m_size]; }
-  [[nodiscard]] constexpr const auto *end() const { return &(*m_data)[m_size]; }
 
   [[nodiscard]] static constexpr auto make(auto... args) {
     array<Tp> res{sizeof...(args)};

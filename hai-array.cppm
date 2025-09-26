@@ -16,12 +16,12 @@ public:
     for (auto i = 0; i < N; i++) (*m_data)[i] = data[i];
   }
 
-  [[nodiscard]] constexpr auto & operator[](this auto && self, unsigned idx) {
-    return (*self.m_data)[idx];
-  }
-
-  [[nodiscard]] constexpr auto data(this auto && self) { return self.m_data.data(); }
+  [[nodiscard]] constexpr auto data(this auto && self) { return *self.m_data; }
   [[nodiscard]] constexpr auto size() const { return m_size; }
+
+  [[nodiscard]] constexpr auto & operator[](this auto && self, unsigned idx) {
+    return self.data()[idx];
+  }
 
   [[nodiscard]] constexpr auto * begin(this auto && self) { return &self[0]; }
   [[nodiscard]] constexpr auto * end(this auto && self) { return &self[self.m_size]; }

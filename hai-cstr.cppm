@@ -35,4 +35,8 @@ static_assert([] {
   c.data()[0] = 'd';
   return c.data()[0] == 'd' && c.data()[1] == '0' && c.data()[4] == 0;
 }());
+static_assert([] {
+  cstr c { "test"_sv };
+  return sv { c } == "test"_sv;
+}());
 } // namespace hai

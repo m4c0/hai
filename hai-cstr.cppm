@@ -1,5 +1,6 @@
 export module hai:cstr;
 import :holder;
+import sv;
 
 namespace hai {
 // cstr stores a null-terminated string, but it exposes only the characters via
@@ -12,6 +13,11 @@ public:
   constexpr cstr() = default;
   explicit constexpr cstr(unsigned sz)
       : m_buf{new char[sz + 1]{}}, m_size{sz} {}
+
+  explicit constexpr cstr(sv sv) : cstr { static_cast<unsigned>(sv.size()) } {
+    auto d = *m_buf;
+    for (auto c : sv) *d++ = c;
+  }
 
   [[nodiscard]] constexpr char *data() { return *m_buf; }
   [[nodiscard]] constexpr const char *data() const { return *m_buf; }

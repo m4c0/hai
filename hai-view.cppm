@@ -13,14 +13,14 @@ namespace hai {
     constexpr view(traits::same_as<T> auto &&... args)
       : m_data { new array<T>{ array<T>::make(args...) } } {}
 
-    [[nodiscard]] constexpr auto size() const { return m_data->size(); }
+    [[nodiscard]] constexpr auto size() const { return m_data ? m_data->size() : 0; }
 
-    [[nodiscard]] constexpr auto begin() const { return m_data->begin(); }
-    [[nodiscard]] constexpr auto end() const { return m_data->end(); }
+    [[nodiscard]] constexpr auto begin() const { return m_data ? m_data->begin() : nullptr; }
+    [[nodiscard]] constexpr auto end() const { return m_data ? m_data->end() : nullptr; }
     [[nodiscard]] constexpr const T & operator[](unsigned idx) const { return (*m_data)[idx]; }
 
-    [[nodiscard]] constexpr auto begin() { return m_data->begin(); }
-    [[nodiscard]] constexpr auto end() { return m_data->end(); }
+    [[nodiscard]] constexpr auto begin() { return m_data ? m_data->begin() : nullptr; }
+    [[nodiscard]] constexpr auto end() { return m_data ? m_data->end() : nullptr; }
     [[nodiscard]] constexpr T & operator[](unsigned idx) { return (*m_data)[idx]; }
   };
 }

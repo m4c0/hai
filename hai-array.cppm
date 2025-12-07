@@ -39,7 +39,7 @@ public:
   }
   constexpr void add_capacity(unsigned qty) { set_capacity(qty + m_size); }
 
-  [[nodiscard]] static constexpr auto make(auto... args) {
+  [[nodiscard]] static constexpr auto make(auto &&... args) {
     array<Tp> res{sizeof...(args)};
     unsigned i = 0;
     ((res[i++] = args), ...);

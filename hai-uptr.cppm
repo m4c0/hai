@@ -17,6 +17,8 @@ public:
   constexpr void reset(Tp *p) { m_holder.reset(p); }
   [[nodiscard]] constexpr Tp *release() { return m_holder.release(); }
 
+  [[nodiscard]] constexpr Tp * data() const { return *m_holder; }
+
   [[nodiscard]] constexpr operator bool() const { return *m_holder != nullptr; }
 
   [[nodiscard]] constexpr Tp &operator*() { return **m_holder; }

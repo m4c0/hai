@@ -35,7 +35,7 @@ namespace hai::chain_impl {
     constexpr cit & operator++() {
       m_pos++;
       if (m_pos < m_h->m_data.size()) return *this;
-      *this = { &*m_h->m_next, 0 };
+      *this = { m_h->m_next ? &*m_h->m_next : nullptr, 0 };
       return *this;
     }
 
@@ -50,7 +50,7 @@ namespace hai::chain_impl {
     constexpr mit & operator++() {
       m_pos++;
       if (m_pos < m_h->m_data.size()) return *this;
-      *this = { &*m_h->m_next, 0 };
+      *this = { m_h->m_next ? &*m_h->m_next : nullptr, 0 };
       return *this;
     }
 
